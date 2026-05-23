@@ -52,8 +52,8 @@ def test_login_success(page, test_config):
 def test_login_fail_wrong_password(page, test_config):
     """TC-02: Login fail – wrong password (*Đăng nhập thất bại – sai mật khẩu*)
 
-    🔴 NOT COMPLETED — Students must implement this test case.
-    (*CHƯA HOÀN THÀNH — Sinh viên cần viết code cho test case này.*)
+    ✅ COMPLETED — Students must implement this test case.
+    (*ĐÃ HOÀN THÀNH — Sinh viên cần viết code cho test case này.*)
 
     Description (*Mô tả*):
         Enter correct email but wrong password → system stays on login page
@@ -90,14 +90,55 @@ def test_login_fail_wrong_password(page, test_config):
            (*Assert: URL vẫn ở trang đăng nhập HOẶC có thông báo lỗi*)
     """
     # TODO: Students implement here (Sinh viên viết code ở đây)
-    pytest.skip("Not implemented — student must complete (Chưa hoàn thành)")
+def test_login_fail_wrong_password(page, test_config):
+    """TC-02: Login fail – wrong password"""
+
+    # [R] Reachability
+    page.goto(test_config["base_url"], wait_until="networkidle", timeout=60000)
+    enable_flutter_semantics(page)
+
+    # [I] Infection
+    flutter_fill(page, "Email", test_config["email"])
+    flutter_fill(page, "Mật khẩu", "wrongpassword")
+
+    flutter_click_button(page, "Đăng nhập")
+
+    # [P] Propagation
+    wait_for_flutter(page)
+
+    page.screenshot(
+        path=os.path.join(SCREENSHOT_DIR, "login_fail_wrong_password.png")
+    )
+
+    # [R✓] Revealability
+    sem_text = " ".join(
+        page.locator("flt-semantics").all_text_contents()
+    )
+
+    has_error = (
+        "Sai mật khẩu" in sem_text
+        or "Đăng nhập thất bại" in sem_text
+        or "Invalid" in sem_text
+        or "incorrect" in sem_text.lower()
+    )
+
+    still_on_login = (
+        "Đăng nhập" in sem_text
+        or "Login" in sem_text
+    )
+
+    assert has_error or still_on_login, \
+        "Expected login failure message or still on login page " \
+        "(Không thấy thông báo lỗi hoặc vẫn ở trang đăng nhập)"
+
+
 
 
 def test_login_fail_empty_fields(page, test_config):
     """TC-03: Login fail – empty fields (*Đăng nhập thất bại – để trống các trường*)
 
-    🔴 NOT COMPLETED — Students must implement this test case.
-    (*CHƯA HOÀN THÀNH — Sinh viên cần viết code cho test case này.*)
+    ✅ COMPLETED — Students must implement this test case.
+    (*HOÀN THÀNH — Sinh viên cần viết code cho test case này.*)
 
     Description (*Mô tả*):
         Leave all fields empty, click Login → system stays on login page.
@@ -111,4 +152,37 @@ def test_login_fail_empty_fields(page, test_config):
         4. Assert: URL still on login page (*Assert: URL vẫn ở trang đăng nhập*)
     """
     # TODO: Students implement here (Sinh viên viết code ở đây)
-    pytest.skip("Not implemented — student must complete (Chưa hoàn thành)")
+def test_login_fail_empty_fields(page, test_config):
+    """TC-03: Login fail – empty fields"""
+
+    # [R] Reachability
+    page.goto(test_config["base_url"], wait_until="networkidle", timeout=60000)
+    enable_flutter_semantics(page)
+
+    # [I] Infection
+    # Không nhập gì
+
+    flutter_click_button(page, "Đăng nhập")
+
+    # [P] Propagation
+    wait_for_flutter(page)
+
+    page.screenshot(
+        path=os.path.join(SCREENSHOT_DIR, "login_fail_empty_fields.png")
+    )
+
+    # [R✓] Revealability
+    sem_text = " ".join(
+        page.locator("flt-semantics").all_text_contents()
+    )
+
+    has_validation = (
+        "required" in sem_text.lower()
+        or "bắt buộc" in sem_text.lower()
+        or "không được để trống" in sem_text.lower()
+        or "Đăng nhập" in sem_text
+    )
+
+    assert has_validation, \
+        "Expected validation error or still on login page " \
+        "(Không thấy validation error hoặc vẫn ở trang đăng nhập)"
