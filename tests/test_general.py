@@ -25,40 +25,81 @@ from conftest import (
 
 
 def test_logout(page, test_config):
-    """TC-11: Logout success (*Đăng xuất thành công*)
+    """TC-11: Logout success"""
 
-    🔴 NOT COMPLETED (*CHƯA HOÀN THÀNH*)
+    # Step 1: Login
+    login(page, test_config)
 
-    Description (*Mô tả*):
-        Log in → click Logout → verify page returns to login screen.
-        (*Đăng nhập → click Đăng xuất → kiểm tra quay về trang đăng nhập.*)
+    # Step 2: Enable Flutter semantics
+    enable_flutter_semantics(page)
 
-    Suggested steps (*Gợi ý*):
-        1. login(page, test_config)
-        2. Find "Đăng xuất" button and click (*Tìm nút "Đăng xuất" và click*)
-        3. Wait 3s, re-enable semantics (*Đợi 3s, bật lại semantics*)
-        4. Assert: "Đăng nhập" button or Email input exists
-           (*Assert: có nút "Đăng nhập" hoặc ô input Email*)
-    """
-    # TODO: Students implement here (Sinh viên viết code ở đây)
-    pytest.skip("Not implemented — student must complete (Chưa hoàn thành)")
+    # Step 3: Click Logout button
+    flutter_click_button(page, "Logout")
+
+    # Step 4: Wait for UI update
+    page.wait_for_timeout(3000)
+
+    # Step 5: Re-enable semantics after navigation
+    enable_flutter_semantics(page)
+
+    # Take screenshot
+    page.screenshot(
+        path=os.path.join(SCREENSHOT_DIR, "logout_success.png")
+    )
+
+    # Step 6: Verify user is back on login page
+    sem_text = " ".join(
+        page.locator("flt-semantics").all_text_contents()
+    )
+
+    has_login_button = (
+        "Login" in sem_text
+        or "Sign In" in sem_text
+    )
+
+    has_email_input = (
+        "Email" in sem_text
+    )
+
+    assert has_login_button or has_email_input, \
+        "Logout failed: Login page not displayed"
 
 
 def test_switch_language_to_english(page, test_config):
-    """TC-12: Switch language to English (*Chuyển ngôn ngữ sang tiếng Anh*)
+    """TC-12: Switch language to English"""
 
-    🔴 NOT COMPLETED (*CHƯA HOÀN THÀNH*)
+    # Step 1: Login
+    login(page, test_config)
 
-    Description (*Mô tả*):
-        Log in → click "EN" button → verify UI switches to English.
-        (*Đăng nhập → click nút "EN" → kiểm tra giao diện chuyển sang tiếng Anh.*)
+    # Step 2: Enable Flutter semantics
+    enable_flutter_semantics(page)
 
-    Suggested steps (*Gợi ý*):
-        1. login(page, test_config)
-        2. Find "EN" button and click (*Tìm nút "EN" và click*)
-        3. Wait 2s, re-enable semantics (*Đợi 2s, bật lại semantics*)
-        4. Get sem_text = " ".join(page.locator("flt-semantics").all_text_contents())
-        5. Assert: "Logout" or "Borrow" or "Library" in sem_text
-    """
-    # TODO: Students implement here (Sinh viên viết code ở đây)
-    pytest.skip("Not implemented — student must complete (Chưa hoàn thành)")
+    # Step 3: Click EN button
+    flutter_click_button(page, "EN")
+
+    # Step 4: Wait for UI update
+    page.wait_for_timeout(2000)
+
+    # Step 5: Re-enable semantics
+    enable_flutter_semantics(page)
+
+    # Take screenshot
+    page.screenshot(
+        path=os.path.join(SCREENSHOT_DIR, "switch_language_english.png")
+    )
+
+    # Step 6: Get semantics text
+    sem_text = " ".join(
+        page.locator("flt-semantics").all_text_contents()
+    )
+
+    # Step 7: Verify English UI appears
+    has_english_ui = (
+        "Logout" in sem_text
+        or "Borrow" in sem_text
+        or "Library" in sem_text
+        or "Search" in sem_text
+    )
+
+    assert has_english_ui, \
+        "Language switch failed: English UI not detected"
